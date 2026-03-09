@@ -7,9 +7,11 @@ import { useMemo } from "react";
  *   username       — display name
  *   timeLeft       — seconds remaining
  *   challengeEnded — boolean
- *   onLogout       — (NEW) callback to log out user
+ *   onLogout       — callback to log out user
+ *   totalScore     — current user score
+ *   showTimer      — whether to show the timer (default: true)
  */
-export default function Header({ username, timeLeft, challengeEnded, onLogout }) {
+export default function Header({ username, timeLeft, challengeEnded, onLogout, totalScore = 0, showTimer = true }) {
   const formatted = useMemo(() => {
     const h = Math.floor(timeLeft / 3600);
     const m = Math.floor((timeLeft % 3600) / 60);
@@ -28,10 +30,20 @@ export default function Header({ username, timeLeft, challengeEnded, onLogout })
       </div>
 
       {/* Timer */}
-      <div className={`timer-wrap ${urgency ? "timer-urgent" : ""} ${challengeEnded ? "timer-ended" : ""}`}>
-        <span className="timer-label">{challengeEnded ? "ENDED" : "TIME LEFT"}</span>
-        <span className="timer-value">{challengeEnded ? "00:00" : formatted}</span>
-      </div>
+      {showTimer && (
+        <div className={`timer-wrap ${urgency ? "timer-urgent" : ""} ${challengeEnded ? "timer-ended" : ""}`}>
+          <span className="timer-label">{challengeEnded ? "ENDED" : "TIME LEFT"}</span>
+          <span className="timer-value">{challengeEnded ? "00:00" : formatted}</span>
+        </div>
+      )}
+
+      {/* Score */}
+      {totalScore > 0 && (
+        <div className="score-wrap">
+          <span className="score-label">SCORE</span>
+          <span className="score-value">{totalScore}</span>
+        </div>
+      )}
 
       {/* User + Logout */}
       <div className="header-user">

@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { executeCode } from "../services/executionService";
 
-const LANGUAGES = ["python", "javascript", "java", "cpp", "c"];
+const LANGUAGES = ["python", "javascript", "java", "c", "cpp"];
 
 const LANG_LABELS = {
   python: "Python 3",
   javascript: "JavaScript",
   java: "Java",
-  cpp: "C++",
   c: "C",
+  cpp: "C++",
 };
 
 /**
@@ -138,11 +138,21 @@ export default function CodeEditor({
           )}
 
           {executionOutput.status === "success" && (
-            <pre className="output-content output-stdout">{executionOutput.stdout || "(no output)"}</pre>
+            <>
+              <pre className="output-content output-stdout">{executionOutput.stdout || "(no output)"}</pre>
+              {executionOutput.stderr && (
+                <pre className="output-content output-stderr">{executionOutput.stderr}</pre>
+              )}
+            </>
           )}
 
           {executionOutput.status === "error" && (
-            <pre className="output-content output-stderr">{executionOutput.stderr}</pre>
+            <>
+              {executionOutput.stdout && (
+                <pre className="output-content output-stdout">{executionOutput.stdout}</pre>
+              )}
+              <pre className="output-content output-stderr">{executionOutput.stderr}</pre>
+            </>
           )}
 
           {executionOutput.executionTime && (

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { registerUser } from "../services/auth";
+import { API_ENDPOINTS } from "../config";
 
 /**
  * RegisterPage — New user registration form.
@@ -23,7 +24,7 @@ const handleRegister = async () => {
   setSubmitting(true);
 
   try {
-    const response = await fetch("http://localhost:8000/api/register_url/", {
+    const response = await fetch(API_ENDPOINTS.register, {
       method: "POST",
       credentials: "include",
       headers: {

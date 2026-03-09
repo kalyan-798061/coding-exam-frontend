@@ -3,37 +3,28 @@ import PuzzleInput from "./PuzzleInput";
 import Submission from "./Submission";
 import TestCaseCard from "./TestCaseCard";
 
-const DIFFICULTY_COLORS = {
-  Easy: "badge-easy",
-  Medium: "badge-medium",
-  Hard: "badge-hard",
-};
-
 /**
  * ProblemPanel — full problem description, examples, puzzle input, and submission.
- * Enhanced with:
- *   - TestCaseCard section showing input/expected output
- *   - Next button to advance to the next question
  */
 export default function ProblemPanel({
   question, puzzleInput,
   answer, setAnswer,
   onSubmit, isSubmitting, disabled,
-  // NEW props:
-  testCases,      // array of { input, expectedOutput }
-  onNext,         // callback to go to next question
-  isLastQuestion, // boolean — disables Next on last question
+  testCases,
 }) {
   if (!question) return null;
+
+  // Check if disabled means it's solved (when disabled is true but challenge not ended)
+  const isSolved = disabled && !question.challengeEnded;
 
   return (
     <div className="problem-panel">
       {/* Problem Header */}
       <div className="problem-header">
         <div className="problem-meta">
-          <span className="problem-number">Day {question.day || question.id}</span>
-          <span className={`difficulty-badge ${DIFFICULTY_COLORS[question.difficulty] || "badge-medium"}`}>
-            {question.difficulty}
+          <span className="problem-number">Question {question.question_id || question.id}</span>
+          <span className={`difficulty-badge badge-${question.difficulty || "medium"}`}>
+            {question.difficulty || "Medium"}
           </span>
         </div>
         <h1 className="problem-title">{question.title}</h1>
@@ -86,10 +77,10 @@ export default function ProblemPanel({
         <PuzzleInput puzzleInput={puzzleInput} />
       </div>
 
-      {/* Test Cases (NEW) — shows input and expected output for this question */}
+      {/* Test Cases — shows input and expected output for this question */}
       <TestCaseCard testCases={testCases} />
 
-      {/* Submission + Next button (NEW) */}
+      {/* Submission */}
       <div className="problem-section">
         <Submission
           answer={answer}
@@ -97,9 +88,7 @@ export default function ProblemPanel({
           onSubmit={onSubmit}
           isSubmitting={isSubmitting}
           disabled={disabled}
-          /* Pass next-question controls down to Submission */
-          onNext={onNext}
-          isLastQuestion={isLastQuestion}
+          isSolved={isSolved}
         />
       </div>
     </div>

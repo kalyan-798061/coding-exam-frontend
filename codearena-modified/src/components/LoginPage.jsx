@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { API_ENDPOINTS } from "../config";
 
 export default function LoginPage({ onSuccess, onRegister }) {
 
@@ -49,7 +50,7 @@ export default function LoginPage({ onSuccess, onRegister }) {
 
     try {
 
-      const response = await fetch("http://localhost:8000/api/login_url/", {
+      const response = await fetch(API_ENDPOINTS.login, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -66,21 +67,26 @@ export default function LoginPage({ onSuccess, onRegister }) {
 
       /* exam started */
       if (data.status === "exam") {
-        if (data.status === "exam") {
+        // Fetch all questions
+        const qResponse = await fetch(
+          API_ENDPOINTS.generateQuestionOrder,
+          {
+            method: "GET",
+            credentials: "include"
+          }
+        );
 
-  const qResponse = await fetch(
-    "http://localhost:8000/api/generate_question_order/",
-    {
-      method: "GET",
-      credentials: "include"
-    }
-  );
+        const questionData = await qResponse.json();
 
-  const questionData = await qResponse.json();
+        if (!qResponse.ok) {
+          throw new Error(questionData.error || "Failed to load questions");
+        }
 
-  onSuccess(questionData);
-}
-        // onSuccess(data);
+        // Pass questions data to parent
+        onSuccess({
+          name: name,
+          ...questionData
+        });
       }
 
       /* exam not started yet */
